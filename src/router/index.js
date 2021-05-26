@@ -6,6 +6,7 @@ import Home from "../views/Home.vue";
 import Register from "../views/Register";
 import Login from "../views/Login";
 import Posts from "../views/Posts";
+import { getCurrentUser } from '../lib/AuthHelpers'
 
 Vue.use(VueRouter);
 
@@ -64,5 +65,62 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+        const cognitoUser = getCurrentUser();
+        if (cognitoUser == null) {
+            store.dispatch("LogOut");
+            next("/login");
+            return
+        }
+
+        cognitoUser.getSession((error, session) => {
+            if (error) throw error;
+            store.commit('setUser', session)
+            next()
+        })
+    } else {
+        next()
+    }
+});
+
+
+/*
+router.beforeEach((to, from, next) => {
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+        const accessToken = new CognitoAccessToken({AccessToken: store.getters.AccessToken});
+        const idToken = new CognitoIdToken({IdToken: store.getters.IdToken});
+        const refreshToken = new CognitoRefreshToken({RefreshToken: store.getters.RefreshToken});
+
+        const sessionData = {
+          IdToken: idToken,
+          AccessToken: accessToken,
+          RefreshToken: refreshToken
+        };
+
+        const cachedSession = new CognitoUserSession(sessionData);
+
+        if (cachedSession.isValid()) {
+          next();
+        } else {
+          const cognitoUser = getCurrentUser();
+          if (cognitoUser == null) {
+            next("/login");
+            return
+          }
+
+          cognitoUser.refreshSession(refreshToken, (err, session) => {
+            if (err) throw err;
+            store.commit('setUser', session)
+            next()
+          });
+        }
+    } else {
+        next()
+    }
+});*/
+
+
 
 export default router;

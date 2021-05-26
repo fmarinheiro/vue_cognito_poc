@@ -4,7 +4,7 @@
       <p>Hi {{ User }}</p>
     </div>
     <div class="posts" v-if="ApiResponse">
-        <p>{{ ApiResponse }}</p>
+        <p>{{ ApiResponse.body }}</p>
     </div>
     <div v-else>Could not make GET Request</div>
   </div>
@@ -23,6 +23,7 @@ export default {
     ...mapGetters({ ApiResponse: "StateApiResponse", User: "StateUser" }),
   },
 };
+
 </script>
 <style scoped>
 * {

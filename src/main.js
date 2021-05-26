@@ -4,8 +4,8 @@ import router from './router';
 import store from './store';
 import axios from 'axios';
 
-axios.defaults.withCredentials = true
-axios.defaults.baseURL = 'https://91vanyfuib.execute-api.eu-west-3.amazonaws.com/';
+axios.defaults.withCredentials = false
+axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 
 axios.interceptors.response.use(undefined, function(error) {
     if (error) {
@@ -19,8 +19,8 @@ axios.interceptors.response.use(undefined, function(error) {
   });
 
 axios.interceptors.request.use(function (config) {
-    const token = store.getters.AccessToken
-    config.headers.Authorization =  token;
+    const token = store.getters.IdToken
+    config.headers.Authorization = token;
 
     return config;
 });

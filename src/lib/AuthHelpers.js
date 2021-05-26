@@ -5,8 +5,8 @@ import {
   } from 'amazon-cognito-identity-js'
 
 const userPool = new CognitoUserPool({
-    UserPoolId: 'eu-west-3_12aTq4hbQ',
-    ClientId: '4nakl4ru21m30e26j39as27c6c',
+    UserPoolId: process.env.VUE_APP_USER_POOL_ID,
+    ClientId: process.env.VUE_APP_CLIENT_ID,
 });
 
 async function login(username, password)
@@ -26,7 +26,7 @@ async function login(username, password)
 async function logout()
 {
     return new Promise((success) => {
-        const cognitoUser = userPool.getCurrentUser();
+        const cognitoUser = getCurrentUser()
         if (cognitoUser !== null) {
           cognitoUser.signOut();
         }
@@ -35,4 +35,9 @@ async function logout()
     });
 }
 
-export { login, logout };
+function getCurrentUser()
+{
+    return userPool.getCurrentUser();
+}
+
+export { login, logout, getCurrentUser };
